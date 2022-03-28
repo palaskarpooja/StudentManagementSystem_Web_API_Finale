@@ -10,24 +10,29 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class RegisterController : ControllerBase
     {
+
         public StudentManagementSystemContext db;
-        public StudentController(StudentManagementSystemContext db1)
+        public RegisterController(StudentManagementSystemContext db1)
         {
             db = db1;
         }
 
         [HttpGet]
-        public IActionResult Register()
+
+        public IActionResult GetAll()
         {
-            return View();
+            return Ok(db.StudentRegistrations);
         }
 
-        
-        private IActionResult View()
+        [HttpPost]
+        public IActionResult AddStudent(StudentRegistration student)
         {
-            throw new NotImplementedException();
+            db.StudentRegistrations.Add(student);
+            db.SaveChanges();
+            return Ok();
+
         }
     }
 }
