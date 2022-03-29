@@ -21,5 +21,7 @@ namespace StudentManagementSystem_Web_API_Finale.Models
 
         public virtual ICollection<Enrollment> Enrollments { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
+
+        
     }
 }
