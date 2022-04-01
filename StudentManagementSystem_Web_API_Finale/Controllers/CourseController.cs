@@ -14,7 +14,7 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
     public class CourseController : Controller
     {
         public StudentManagementSystemContext db;
-        private object id;
+
 
         public CourseController(StudentManagementSystemContext db1)
         {
@@ -37,7 +37,7 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Course>> GetCourse(int id)
+        public async Task<ActionResult<Course>> GetCourse(byte id)
         {
             var course = await db.Courses.FindAsync(id);
 
@@ -49,8 +49,43 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
             return course;
         }
 
+        [HttpPut("PutCourse/{id}")]
+        public async Task<IActionResult> PutCourses(byte id, Course course)
+        {
+            try
+            {
+                if (id != course.Id)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    db.Entry(course).State = EntityState.Modified;
+                    var res = await db.SaveChangesAsync();
+                    return Ok(res);
+                }
 
-        [HttpPut("{id}")]
+
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CourseExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+
+
+
+            }
+
+        }
+
+        /*[HttpPut("putcourse/{id}")]
         public async Task<IActionResult> EditCourse(int id, Course course)
         {
 
@@ -79,16 +114,17 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
 
             return CreatedAtAction("GetCars", new { id = course.Id }, course);
 
-        }
+        }*/
 
         private bool CourseExists(object courseId)
         {
             throw new NotImplementedException();
         }
 
-        private bool CourseExists(int id)
+        [HttpGet("courselist")]
+        public IActionResult GetCourseList()
         {
-            throw new NotImplementedException();
+            return Ok(db.Courses);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
     {
         private readonly StudentManagementSystemContext _context;
 
+
         public CoursesController(StudentManagementSystemContext context)
         {
             _context = context;
@@ -40,6 +41,63 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
 
             return course;
         }
+
+        [HttpGet("mycourse/{name}")]
+
+        public ActionResult<Course> GetCourses(string name)
+        {
+            var result = from c in _context.Courses
+                         join e in _context.Enrollments on
+                            c.Id equals e.CourseId
+                         join s in _context.StudentRegistrations
+                        on e.StudentId equals s.Id
+                         where s.Username == name
+                               select c;          
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(result);
+        }
+
+
+        //------------------------------------------------------
+
+
+       [HttpGet("studentcourseenrollment/{id}")]//Admin- Enroll Courses
+        public ActionResult<Course> StudentCourseEnrollment(int id)
+        {
+           
+            var result = (from c in _context.Courses
+                         join e in _context.Enrollments on
+                            c.Id equals e.CourseId
+                         join s in _context.StudentRegistrations
+                        on e.StudentId equals s.Id
+                         where c.Id == id
+                         select new 
+                         {
+                             s.Id,
+                             s.FirstName,
+                             s.LastName,
+                             c.Name,
+                             c.Duration,
+                             s.ContactNumber,
+                             s.CollegeId
+                         }).Distinct();
+
+            if (result == null)
+            {
+                return NotFound();
+              }
+
+            return Ok(result);
+}
+
+
+       
 
         // PUT: api/Courses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -118,4 +176,5 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
             return _context.Courses.Any(e => e.Id == id);
         }
     }
+
 }

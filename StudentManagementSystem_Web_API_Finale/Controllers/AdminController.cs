@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StudentManagementSystem_Web_API_Finale.Models;
@@ -17,86 +16,88 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RegisterController : ControllerBase
+    public class AdminController : ControllerBase
     {
-
         public StudentManagementSystemContext db;
+
         private IConfiguration _config;
 
-        public RegisterController(IConfiguration config,StudentManagementSystemContext db1)
+        public AdminController(IConfiguration config, StudentManagementSystemContext db1)
         {
             _config = config;
             db = db1;
         }
 
-        [HttpGet]
-
-        public IActionResult GetStudentDetails()
-        {
-            return Ok(db.StudentRegistrations);
-
-        }
-
-        [HttpPost]
-        public IActionResult AddStudent(StudentRegistration student)
-        {
-
-            db.StudentRegistrations.Add(student);
-            db.SaveChanges();
-            return Ok();
-
-        }
-
-
-
-
 
 
         [AllowAnonymous]
         [HttpPost("validate")]
-        public IActionResult Login([FromBody] StudentLogin studentlogin)
+        public IActionResult Login([FromBody] Admin admin)
         {
-            var user = Authenticate(studentlogin);
+            var User = Authenticate(admin);
 
-            if (user != null)
+
+
+            if (User != null)
             {
-                var token = Generate(user);
+                var token = Generate(User);
                 return Ok(token);
             }
-
             return NotFound("User not found");
         }
 
- 
-        private string Generate(StudentRegistration studentRegistration)
+        private object Generate(object user)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+        private string Generate(Admin admin)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+
+
             var claims = new[]
             {
-                new Claim(ClaimTypes.GivenName, studentRegistration.Password),
+                new Claim(ClaimTypes.GivenName, admin.Password),
 
-            };
+                };
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Audience"],
-              claims,
-              expires: DateTime.Now.AddMinutes(15),
-              signingCredentials: credentials);
+
+
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+            _config["Jwt:Audience"],
+            claims,
+            expires: DateTime.Now.AddMinutes(15),
+            signingCredentials: credentials);
+
+
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private StudentRegistration Authenticate(StudentLogin studentlogin)
+
+
+        private Admin Authenticate(Admin admin)
         {
-            var currentUser = db.StudentRegistrations.FirstOrDefault(o => o.Username.ToLower() == studentlogin.Username.ToLower() && o.Password == studentlogin.Password);
+            var currentUser = db.Admins.FirstOrDefault(o => o.Username == admin.Username && o.Password == admin.Password);
 
             if (currentUser != null)
             {
                 return currentUser;
             }
-
             return null;
         }
+
+
+
     }
 }
+
+        
+
+        
+    

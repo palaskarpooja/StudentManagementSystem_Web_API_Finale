@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using StudentManagementSystem_Web_API_Finale.Models;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Threading.Tasks;
+using System;
+using StudentManagementSystem_Web_API_Finale.Models;
 
 namespace StudentManagementSystem_Web_API_Finale.Controllers
 {
@@ -13,6 +10,8 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
     public class EnrollmentController : ControllerBase
     {
         public StudentManagementSystemContext db;
+
+
         public EnrollmentController(StudentManagementSystemContext db1)
         {
             db = db1;
@@ -23,7 +22,40 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
         public IActionResult GetEnrollment()
         {
             return Ok(db.Enrollments);
+
         }
+
+        [HttpGet("todaysenrollment")]
+
+        public IActionResult GetEnrollmentByTodaysDate(int id)
+        {
+
+
+            var result = from c in db.Courses
+                         join e in db.Enrollments on
+                            c.Id equals e.CourseId
+                         join s in db.StudentRegistrations
+                        on e.StudentId equals s.Id
+                         where e.CreatedDate.Date == DateTime.Now.Date
+                         select new
+                         {
+                             
+                             s.FirstName,
+                             s.LastName,
+                             c.Name,
+                             s.ContactNumber
+
+                         };
+
+
+
+            return Ok(result);
+        }
+
+    
+
+
+
 
         [HttpPost]
         public IActionResult AddEnrollment(Enrollment enrollment)
@@ -34,6 +66,9 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
             return Ok();
 
         }
+
+        
+
 
     }
 }

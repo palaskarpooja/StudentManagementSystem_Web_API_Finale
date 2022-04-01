@@ -24,6 +24,7 @@ namespace StudentManagementSystem_Web_API_Finale.Models
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<StudentRegistration> StudentRegistrations { get; set; }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

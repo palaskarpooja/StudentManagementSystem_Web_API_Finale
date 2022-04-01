@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem_Web_API_Finale.Models;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,14 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
             db = db1;
         }
 
+
         [HttpGet]
-        public IActionResult Register()
+        public async Task<ActionResult<IEnumerable<StudentRegistration>>> GetStudentDetail()
         {
-            return View();
+            return await db.StudentRegistrations.ToListAsync();
         }
 
-        
+
         private IActionResult View()
         {
             throw new NotImplementedException();
