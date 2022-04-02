@@ -61,6 +61,7 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
         public IActionResult AddEnrollment(Enrollment enrollment)
 
         {
+           
             db.Enrollments.Add(enrollment);
             db.SaveChanges();
             return Ok();
