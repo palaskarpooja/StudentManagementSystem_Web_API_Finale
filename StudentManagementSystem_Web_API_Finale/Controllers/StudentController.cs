@@ -43,6 +43,10 @@ namespace StudentManagementSystem_Web_API_Finale.Controllers
             return Ok(student);
         }
 
+
+        
+
+
         // PUT: api/StudentRegistration/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("putstudent/{id}")]
